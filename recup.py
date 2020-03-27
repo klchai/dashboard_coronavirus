@@ -1,12 +1,29 @@
 import pandas as pd
 import requests
 import csv
+import urllib
+import socket
+
+socket.setdefaulttimeout(30)
 
 #Recupérartion des données
 url = 'https://www.data.gouv.fr/fr/resources.csv?badge=covid-19'
 DOWNLOAD_PATH ='ressources.csv'
 fichier = open( DOWNLOAD_PATH , "a")
-urllib.request.urlretrieve(url,DOWNLOAD_PATH)
+try:
+    urllib.request.urlretrieve(url,DOWNLOAD_PATH)
+except socket.timeout:
+    count = 1
+    while count <= 5:
+        try:
+            urllib.urlretrieve(url,DOWNLOAD_PATH)
+            break
+        except socket.timeout:
+            err_info = 'Reloading for %d time'%count if count ==1 else 'Reload for %d times'%count
+            print(err_info)
+            count += 1
+    if count > 5:
+        print("download job failed")
 fichier.close()
 
 ressource = pd.read_csv('ressources.csv',sep=';')
