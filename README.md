@@ -1,8 +1,39 @@
-# dashboard_coronavirus
+//création d'un répertoire dans lequel on va cloner le projet git
+mkdir projet-android
+cd projet-android/
 
-## Déployer un cluster hadoop 
+//téléchargement et installation de l'image docker
+//cette commande prendra un peu de temps
+git clone https://github.com/big-data-europe/docker-hive.git
+cd docker-hive/
+docker-compose up -d
 
-1. Il faut d'abord installer docker compose (https://docs.docker.com/compose/install/).
-2. Dans le dossier cluster_hadoop, exécuter la commande : __docker-compose up -d__
-3. Entrer dans le conteneur : __docker exec -it namenode bash__
-4. Pour supprimer le cluster : __docker-compose down__
+//lancer hive et le bash de l'image docker
+docker exec -it docker-hive_hive-server_1 /bin/bash
+
+//tout le reste est à éxecuter à l'interieur de l'image docker
+//l'image contient quasiment rien à part hive et HDFS
+//installation des bibliothèques nécessaires
+apt-get update
+apt-get install python3
+apt-get install -y libsasl2-modules libsasl2-dev
+
+apt install python3-pip
+pip install six==1.12.0
+//installation de hive
+pip3 install 'pyhive[hive]'
+
+//tester que hive fonctionne
+hive
+
+//tester dans python
+python3
+>>
+    from pyhive import hive
+    cursor = hive.connect('localhost').cursor()
+    cursor.execute("CREATE TABLE test_table(nom STRING, age INT)")
+    cursor.execute("SHOW tables")
+    print(cursor.fetchall())
+
+//pour quitter l'image docker
+exit
