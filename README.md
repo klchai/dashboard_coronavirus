@@ -22,7 +22,7 @@ l'image contient quasiment rien à part hive et HDFS
     apt-get install -y libsasl2-modules libsasl2-dev
 
     apt install python3-pip
-    pip install six==1.12.0
+    pip3 install six==1.12.0
     
 ### installation de hive
     pip3 install 'pyhive[hive]'
