@@ -1,0 +1,20 @@
+Compte rendu
+03/04-10/04
+
+Taches effectuées la semaine dernière:
+    -Oussama :  -Installation de l'image Docker Hive & HDFS
+                -Connexion à Hive avec PyHive.
+    -Kelun :    -Installation de l'image Docker Hive & HDFS
+                -Connexion à Hive avec PyHive.
+    -Djaber :   -Installation de PyHive dans l'image Docker.
+    -Nogaye : ?
+
+Taches à faire la semaine prochaine:
+    -Oussama :  -Interface minimale Android.
+                -Exemple de requetes et de parsing de la réponse depuis l'app Android.
+    -Kelun :    -Création de la table Hive
+                -Remplissage de la table Hive avec les données OpenData
+    -Djaber :   -Modification de l'image Docker.
+                -Création d'un simple web serveur.
+                -Ouverture du port dans l'image Docker.
+    -Nogaye : ?
