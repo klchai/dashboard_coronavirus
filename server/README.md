@@ -19,4 +19,5 @@ Si vous souhaitez tester Hive, procédez comme suit:
 `create table if not exists covid(dep STRING, sexe INT, jour STRING, hosp INT, rea INT, rad INT, dc INT) row format delimited fields terminated by ';' tblproperties("skip.header.line.count"="1");`
 5. Lire les données depuis fichier csv
 `load data local inpath '/opt/res.csv' overwrite into table covid;`
-6. Affichier la table `select **** from covid limit 10;`
+6. Affichier la table `select * from covid limit 10;`
+`select * from covid where dep='"75"' and dc>500;`
