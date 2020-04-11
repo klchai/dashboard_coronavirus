@@ -1,3 +1,8 @@
+# Lire les données dans Hive
+`hive`
+`create table if not exists covid(dep STRING, sexe INT, jour STRING, hosp INT, rea INT, rad INT, dc INT) row format delimited fields terminated by ';' tblproperties("skip.header.line.count"="1");`
+`load data local inpath '/opt/res.csv' overwrite into table covid;`
+
 # Démarrer le serveur web
 
 # Pré-requis
