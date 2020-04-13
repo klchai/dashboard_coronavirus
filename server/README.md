@@ -7,8 +7,7 @@ __apt-get update && apt-get install -y libsasl2-modules libsasl2-dev && pip inst
 
 1. __docker-compose up -d__ pour lancer le serveur hive
 2. Attendre une dizaine de secondes pour que le serveur se lance
-3. __python3 recup.py__ pour télécharger le fichier csv et renommé comme `res.csv`
-4. __python3 web_server.py__ pour lire les données dans Hive puis lancer le serveur web
+4. __python3 web_server.py__ pour lancer le serveur web qui va insérer les données dans Hive et les requeter
 
 # Hive
 Si vous souhaitez tester Hive, procédez comme suit:
