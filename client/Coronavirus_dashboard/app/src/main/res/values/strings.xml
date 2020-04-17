@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Coronavirus Stats</string>
+    <string name="tab_text_1">Live Stats</string>
+    <string name="tab_text_2">Predictions</string>
+</resources>
