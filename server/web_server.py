@@ -1,5 +1,5 @@
 from pyhive import hive
-from flask import Flask
+from flask import Flask,jsonify
 import os
 import requests
 import csv
@@ -33,6 +33,13 @@ app = Flask(__name__)
 def home():
     return "Home page of the web server of the dashboard_coronavirus."
 
+@app.route("/select")
+def select():
+    cursor.execute("SELECT * FROM covid LIMIT 10")
+    res=cursor.fetchall()
+    res_json=[{"dep":row[0],"sexe":row[1],"jour":row[2],"hosp":row[3],"rea":row[4],"rad":row[5],"dc":row[6]} for row in res]
+    return jsonify(res_json)
+
 if __name__ == "__main__":
     cursor = hive.connect(host='localhost').cursor()
     retrieve_data()
@@ -41,6 +48,4 @@ if __name__ == "__main__":
     cursor.execute("""CREATE TABLE IF NOT EXISTS covid(dep STRING,sexe INT,jour STRING,hosp INT,rea INT,rad INT,dc INT) 
         row format delimited fields terminated by ';' tblproperties('skip.header.line.count'='1')""")
     cursor.execute("LOAD DATA LOCAL INPATH '/opt/hive/bin/res.csv' OVERWRITE INTO TABLE covid")
-    cursor.execute("SELECT COUNT(*) FROM covid")
-    print(cursor.fetchall())
     app.run()
