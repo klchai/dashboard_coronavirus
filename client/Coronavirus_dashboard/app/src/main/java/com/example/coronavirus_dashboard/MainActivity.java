@@ -15,6 +15,11 @@ import android.view.View;
 
 import com.example.coronavirus_dashboard.ui.main.SectionsPagerAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.concurrent.ExecutionException;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -35,5 +40,23 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        String myUrl = "http://10.0.2.2:8000/get_countries_list";
+        //String to place our result in
+        String result;
+        //Instantiate new instance of our class
+        JSONRequests getRequest = new JSONRequests();
+        //Perform the doInBackground method, passing in our url
+        try {
+            result = getRequest.execute(myUrl).get();
+            System.out.println(result);
+            JSONArray obj = new JSONArray(result);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
