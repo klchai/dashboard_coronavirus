@@ -40,9 +40,30 @@ def select():
     res_json=[{"dep":row[0],"sexe":row[1],"jour":row[2],"hosp":row[3],"rea":row[4],"rad":row[5],"dc":row[6]} for row in res]
     return jsonify(res_json)
 
+@app.route("/dcjour")
+# Nombre de deces par jour
+def dcjour():
+    cursor.execute("SELECT jour,sum(dc) AS dc_total FROM covid WHERE sexe=0 GROUP BY jour")
+    res=cursor.fetchall()
+    res_json=[{"jour":row[0],"dc":row[1]} for row in res]
+    return jsonify(res_json)
+
+@app.route("/dcdep/<jour>")
+def dcdep(jour):
+    cursor.execute("SELECT dep,jour,sum(dc) AS dc_total FROM covid WHERE jour='\"%s\"' GROUP BY dep,jour" % jour)
+    res=cursor.fetchall()
+    res_json=[{"dep":row[0],"jour":row[1],"dc":row[2]} for row in res]
+    return jsonify(res_json)
+
+@app.route("/dep/<dep>")
+def dep(dep):
+    cursor.execute("SELECT dep,jour,sum(dc) AS dc_total FROM covid WHERE dep='\"%s\"' GROUP BY dep,jour" % dep)
+    res=cursor.fetchall()
+    res_json=[{"dep":row[0],"jour":row[1],"dc":row[2]} for row in res]
+    return jsonify(res_json)
+    
 if __name__ == "__main__":
     cursor = hive.connect(host='localhost').cursor()
-    retrieve_data()
     os.system("docker cp res.csv server_hive-server_1:/opt/hive/bin/res.csv")
     # creer la table si besoin et ignorer la premiere ligne de fichier csv
     cursor.execute("""CREATE TABLE IF NOT EXISTS covid(dep STRING,sexe INT,jour STRING,hosp INT,rea INT,rad INT,dc INT) 
