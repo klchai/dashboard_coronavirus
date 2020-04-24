@@ -57,9 +57,9 @@ def dcdep(jour):
 
 @app.route("/dep/<dep>")
 def dep(dep):
-    cursor.execute("SELECT dep,jour,sum(dc) AS dc_total FROM covid WHERE dep='\"%s\"' GROUP BY dep,jour" % dep)
+    cursor.execute("SELECT jour,sum(dc) AS dc_total FROM covid WHERE dep='\"%s\"' GROUP BY jour" % dep)
     res=cursor.fetchall()
-    res_json=[{"dep":row[0],"jour":row[1],"dc":row[2]} for row in res]
+    res_json=[{"jour":row[0],"dc":row[1]} for row in res]
     return jsonify(res_json)
     
 if __name__ == "__main__":
