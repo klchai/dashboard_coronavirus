@@ -63,6 +63,7 @@ def dep(dep):
     return jsonify(res_json)
     
 if __name__ == "__main__":
+    retrieve_data()
     cursor = hive.connect(host='localhost').cursor()
     os.system("docker cp res.csv server_hive-server_1:/opt/hive/bin/res.csv")
     # creer la table si besoin et ignorer la premiere ligne de fichier csv
