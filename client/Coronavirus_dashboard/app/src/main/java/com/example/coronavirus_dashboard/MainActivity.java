@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         //Instantiate new instance of our class
         JSONRequests getRequest = new JSONRequests();
         //Perform the doInBackground method, passing in our url
-        try {
+        /*try {
             result = getRequest.execute(myUrl).get();
             System.out.println(result);
             JSONArray obj = new JSONArray(result);
@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        } catch (Exception e){
+            e.printStackTrace();
+        }*/
     }
 }
