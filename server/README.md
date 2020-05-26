@@ -15,8 +15,11 @@ Si vous souhaitez tester Hive, procédez comme suit:
 2. Lancer l'image de docker `docker exec -it {nom_du_conteneur} /bin/bash`
 3. Lancer hive `hive`
 4. Créer la table dans hive
-`create table if not exists covid(dep STRING, sexe INT, jour STRING, hosp INT, rea INT, rad INT, dc INT) row format delimited fields terminated by ';' tblproperties("skip.header.line.count"="1");`
+`CREATE TABLE IF NOT EXISTS covid(country STRING,prov STRING,confirm INT, recov INT, death INT,jour STRING) 
+        ROW FORMAT DELIMITED
+        FIELDS TERMINATED BY ';'
+        tblproperties('skip.header.line.count'='1')`
 5. Lire les données depuis fichier csv
-`load data local inpath '/opt/res.csv' overwrite into table covid;`
+`LOAD DATA LOCAL INPATH '/opt/hive/bin/res.csv' OVERWRITE INTO TABLE covid`
 6. Affichier la table `select * from covid limit 10;`
-`select * from covid where dep='"75"' and dc>500;`
+`SELECT * FROM covid WHERE country=\"France\" LIMIT 10`
