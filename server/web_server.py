@@ -16,39 +16,32 @@ def home():
 
 @app.route("/select")
 def select():
-    cursor.execute("SELECT * FROM covid LIMIT 10")
+    cursor.execute("SELECT * FROM covid WHERE country=\"France\" LIMIT 10")
     res=cursor.fetchall()
-    res_json=[{"jour":row[0],"confirm":row[1],"dc":row[2],"rea":row[3],"hosp":row[4],"gu":row[5],"sus":row[6]} for row in res]
+    res_json=[{"country":row[0],"prov":row[1],"confirm":row[2],"recov":row[3],"death":row[4],"jour":row[5]} for row in res]
     return jsonify(res_json)
 
-@app.route("/dcjour")
+@app.route("/deathbyday")
 # Nombre de deces par jour
-def dcjour():
-    cursor.execute("SELECT jour,dc FROM covid")
-    res=cursor.fetchall()
-    res_json=[{"jour":row[0],"dc":row[1]} for row in res]
-    return jsonify(res_json)
-
-@app.route("/dc/<jour>")
-# Nombre de deces par jour
-def dc(jour):
-    cursor.execute("SELECT dc FROM covid WHERE jour='\"%s\"' " % jour) 
+def deathbyday():
+    cursor.execute("SELECT jour,sum(death) FROM covid WHERE country=\"France\" GROUP BY jour ORDER BY jour") 
     res=cursor.fetchall()
     res_json=[{"dc":row[0]} for row in res]
     return jsonify(res_json)
 
-@app.route("/confjour")
+@app.route("/confbyday")
 # Cas confirme par jour
-def confjour():
-    cursor.execute("SELECT jour,confirm FROM covid")
+# select jour,sum(confirm) from covid where country="France" group by jour order by jour;
+def confbyday():
+    cursor.execute("SELECT jour,sum(confirm) FROM covid WHERE country=\"France\" GROUP BY jour ORDER BY jour")
     res=cursor.fetchall()
     res_json=[{"jour":row[0],"conf":row[1]} for row in res]
     return jsonify(res_json)
 
-@app.route("/gujour")
+@app.route("/recovbyday")
 # Recovered par jour
-def gujour():
-    cursor.execute("SELECT jour,gu FROM covid")
+def recovbyday():
+    cursor.execute("SELECT jour,sum(recov) FROM covid WHERE country=\"France\" GROUP BY jour ORDER BY jour")
     res=cursor.fetchall()
     res_json=[{"jour":row[0],"gu":row[1]} for row in res]
     return jsonify(res_json)
@@ -65,7 +58,7 @@ if __name__ == "__main__":
     cursor = hive.connect(host='localhost').cursor()
     os.system("docker cp res.csv server_hive-server_1:/opt/hive/bin/res.csv")
     # creer la table si besoin et ignorer la premiere ligne de fichier csv
-    cursor.execute("""CREATE TABLE IF NOT EXISTS covid(jour string,confirm int,dc int,rea int,hosp int,gu int,sus int) 
+    cursor.execute("""CREATE TABLE IF NOT EXISTS covid(country STRING,prov STRING,confirm INT, recov INT, death INT,jour STRING) 
         ROW FORMAT DELIMITED
         FIELDS TERMINATED BY ';'
         tblproperties('skip.header.line.count'='1')""")
