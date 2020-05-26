@@ -46,6 +46,9 @@ def recovbyday():
     res_json=[{"jour":row[0],"gu":row[1]} for row in res]
     return jsonify(res_json)
 
+@app.route("/pred_conf")
+def pred_conf():
+    return pre.predict_Prophet()
 # @app.route("/dcdep/<jour>")
 # def dcdep(jour):
 #     cursor.execute("SELECT jour,sum(dc) AS dc_total FROM covid WHERE jour='\"%s\"' GROUP BY dep,jour" % jour)
