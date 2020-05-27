@@ -2,6 +2,7 @@ package com.example.coronavirus_dashboard;
 
 import android.os.Bundle;
 
+import com.example.coronavirus_dashboard.ui.main.LiveStatsFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -36,29 +37,49 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getDataAndRefreshCharts();
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
+    }
 
-        String myUrl = "http://10.0.2.2:8000/get_countries_list";
+    private void getDataAndRefreshCharts(){
+        //Daily cases data
+        String myUrl = "http://10.0.2.2:5000/confbyday";
         //String to place our result in
         String result;
         //Instantiate new instance of our class
         JSONRequests getRequest = new JSONRequests();
-        //Perform the doInBackground method, passing in our url
-        /*try {
+        try {
             result = getRequest.execute(myUrl).get();
             System.out.println(result);
             JSONArray obj = new JSONArray(result);
-        } catch (ExecutionException e) {
+            LiveStatsFragment.refreshDailyCasesChart(obj);
+        /*} catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (JSONException e) {
-            e.printStackTrace();
+            e.printStackTrace();*/
         } catch (Exception e){
             e.printStackTrace();
-        }*/
+        }
+
+        //Daily deaths data
+        //remplacer par le lien vers le nobmre de deces par jour
+        myUrl = "http://10.0.2.2:5000/deathbyday";
+        //String to place our result in
+        result = null;
+        //Instantiate new instance of our class
+        getRequest = new JSONRequests();
+        try {
+            result = getRequest.execute(myUrl).get();
+            System.out.println(result);
+            JSONArray obj = new JSONArray(result);
+            LiveStatsFragment.refreshDailyDeathsChart(obj);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
