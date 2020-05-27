@@ -1,6 +1,5 @@
 import pandas as pd
 from fbprophet import Prophet
-from statsmodels.tsa.arima_model import ARIMA
 
 def prepare_data():
     print("Begin prepare.")
@@ -21,11 +20,11 @@ def predict_Prophet():
     pr_data.columns = ['ds','y']
     m = Prophet()
     m.fit(pr_data)
-    future=m.make_future_dataframe(periods=15)
+    future=m.make_future_dataframe(periods=30)
     forecast=m.predict(future)
     cnfrm = forecast.loc[:,['ds','trend']]
     cnfrm = cnfrm[cnfrm['trend']>0]
     cnfrm.columns = ['Date','Confirm']
     cnfrm[["Confirm"]] = cnfrm[["Confirm"]].astype(int)
-    res = cnfrm.astype(str).to_json(orient='records',date_format="iso")
+    res = cnfrm.astype(str).to_json(orient='records')
     return res

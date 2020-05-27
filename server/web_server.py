@@ -26,7 +26,7 @@ def select():
 def deathbyday():
     cursor.execute("SELECT jour,sum(death) FROM covid WHERE country=\"France\" GROUP BY jour ORDER BY jour") 
     res=cursor.fetchall()
-    res_json=[{"dc":row[0]} for row in res]
+    res_json=[{"jour":row[0],"death":row[1]} for row in res]
     return jsonify(res_json)
 
 @app.route("/confbyday")
@@ -50,17 +50,12 @@ def recovbyday():
 def pred_conf():
     return pre.predict_Prophet()
     
-# @app.route("/dcdep/<jour>")
-# def dcdep(jour):
-#     cursor.execute("SELECT jour,sum(dc) AS dc_total FROM covid WHERE jour='\"%s\"' GROUP BY dep,jour" % jour)
-#     res=cursor.fetchall()
-#     res_json=[{"jour":row[0],"confirm":row[2]} for row in res]
-#     return jsonify(res_json)
-    
 if __name__ == "__main__":
     pre.prepare_data()
     cursor = hive.connect(host='localhost').cursor()
     os.system("docker cp res.csv server_hive-server_1:/opt/hive/bin/res.csv")
+    # supprime la table 
+    cursor.execute("""DROP TABLE IF EXISTS covid""")
     # creer la table si besoin et ignorer la premiere ligne de fichier csv
     cursor.execute("""CREATE TABLE IF NOT EXISTS covid(country STRING,prov STRING,confirm INT, recov INT, death INT,jour STRING) 
         ROW FORMAT DELIMITED
