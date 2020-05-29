@@ -49,7 +49,19 @@ def recovbyday():
 @app.route("/pred_conf")
 def pred_conf():
     return pre.predict_Prophet()
-    
+
+@app.route("/pred_conf_arima")
+def pred_conf_arima():
+    return pre.predict_Arima()
+
+@app.route("/pred_death_P")
+def pred_death_P():
+    return pre.predict_death_P()
+
+@app.route("/pred_death_A")
+def pred_death_P():
+    return pre.predict_death_A()
+
 if __name__ == "__main__":
     pre.prepare_data()
     cursor = hive.connect(host='localhost').cursor()

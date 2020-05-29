@@ -1,5 +1,6 @@
 import pandas as pd
 from fbprophet import Prophet
+from statsmodels.tsa.arima_model import ARIMA
 
 def prepare_data():
     print("Begin prepare.")
@@ -11,10 +12,14 @@ def prepare_data():
     df.to_csv("res.csv",sep=";",index=False,header=headers)
     print("Prepare finished.")
 
-def predict_Prophet():
+def pred_data():
     pred = pd.read_csv("covid-19-all.csv",sep=",")
     pred = pred.fillna(0)
     predgrp = pred[pred['Country/Region']=='France'].groupby('Date')['Confirmed','Recovered','Deaths'].sum().reset_index()
+    return predgrp
+
+def predict_Prophet():
+    predgrp = pred_data()
     pred_cnfrm = predgrp.loc[:,["Date","Confirmed"]]
     pr_data = pred_cnfrm
     pr_data.columns = ['ds','y']
@@ -27,4 +32,62 @@ def predict_Prophet():
     cnfrm.columns = ['Date','Confirm']
     cnfrm[["Confirm"]] = cnfrm[["Confirm"]].astype(int)
     res = cnfrm.astype(str).to_json(orient='records')
+    return res
+
+def predict_Arima():
+    predgrp = pred_data()
+    pred_cnfrm = predgrp.loc[:,["Date","Confirmed"]]
+    confirm_cs = pred_cnfrm.cumsum()
+    confirm_cs['date1'] = pred_cnfrm['Date']
+    confirm_cs = confirm_cs.drop('Date',axis=1)
+    arima_data = confirm_cs
+    arima_data.columns = ['count','confirmed_date']
+    model = ARIMA(arima_data['count'].values, order=(1, 2, 1))
+    fit_model = model.fit(trend='c', full_output=True, disp=True)
+    forcast = fit_model.forecast(steps=31)
+    pred_y = forcast[0].tolist()
+    pred = pd.DataFrame(pred_y)
+    pred['pred']=  pred - pred.shift(1)
+    predict = pd.DataFrame({'Date':pd.date_range("20200526",periods=30).astype(str),'Confirmed':pred.drop(0)['pred'].astype(int)})
+    pred_cnfrm["Confirmed"] = pred_cnfrm["Confirmed"].astype(int)
+    res = pd.concat([pred_cnfrm, predict])
+    res.reset_index(drop=True,inplace=True)
+    res = res.to_json(orient='records')
+    return res
+
+def predict_death_P():
+    predgrp = pred_data()
+    pred_cnfrm = predgrp.loc[:,["Date","Deaths"]]
+    pr_data = pred_cnfrm
+    pr_data.columns = ['ds','y']
+    m = Prophet()
+    m.fit(pr_data)
+    future=m.make_future_dataframe(periods=30)
+    forecast=m.predict(future)
+    cnfrm = forecast.loc[:,['ds','trend']]
+    cnfrm = cnfrm[cnfrm['trend']>0]
+    cnfrm.columns = ['Date','Deaths']
+    cnfrm[["Deaths"]] = cnfrm[["Deaths"]].astype(int)
+    res = cnfrm.astype(str).to_json(orient='records')
+    return res
+
+def predict_death_A():
+    predgrp = pred_data()
+    pred_cnfrm = predgrp.loc[:,["Date","Deaths"]]
+    confirm_cs = pred_cnfrm.cumsum()
+    confirm_cs['date1'] = pred_cnfrm['Date']
+    confirm_cs = confirm_cs.drop('Date',axis=1)
+    arima_data = confirm_cs
+    arima_data.columns = ['count','death_date']
+    model = ARIMA(arima_data['count'].values, order=(1, 2, 1))
+    fit_model = model.fit(trend='c', full_output=True, disp=True)
+    forcast = fit_model.forecast(steps=31)
+    pred_y = forcast[0].tolist()
+    pred = pd.DataFrame(pred_y)
+    pred['pred']=  pred - pred.shift(1)
+    predict = pd.DataFrame({'Date':pd.date_range("20200526",periods=30).astype(str),'Deaths':pred.drop(0)['pred'].astype(int)})
+    pred_cnfrm["Deaths"] = pred_cnfrm["Deaths"].astype(int)
+    res = pd.concat([pred_cnfrm, predict])
+    res.reset_index(drop=True,inplace=True)
+    res = res.to_json(orient='records')
     return res
