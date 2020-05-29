@@ -46,6 +46,14 @@ def recovbyday():
     res_json=[{"jour":row[0],"gu":row[1]} for row in res]
     return jsonify(res_json)
 
+@app.route("/compose/<day>")
+def compose(day):
+    cursor.execute("SELECT * FROM (SELECT jour, sum(confirm), sum(recov), sum(death) from covid WHERE country=\"France\" group by jour ORDER BY jour)a\
+    WHERE a.jour=\"%s\"" % day)
+    res=cursor.fetchall()
+    res_json=[{"jour":row[0],"confirm":row[1],"recov":row[2],"death":row[3]} for row in res]
+    return jsonify(res_json)
+
 @app.route("/pred_conf")
 def pred_conf():
     return pre.predict_Prophet()
@@ -59,7 +67,7 @@ def pred_death_P():
     return pre.predict_death_P()
 
 @app.route("/pred_death_A")
-def pred_death_P():
+def pred_death_A():
     return pre.predict_death_A()
 
 if __name__ == "__main__":
