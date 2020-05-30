@@ -1,9 +1,7 @@
 package com.example.coronavirus_dashboard.ui.main;
 
-import android.app.Activity;
 import android.os.Bundle;
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -11,47 +9,29 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.coronavirus_dashboard.JSONRequests;
-import com.example.coronavirus_dashboard.MainActivity;
 import com.example.coronavirus_dashboard.R;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-
-//Classe manipulant le contenu de l'onglet : Live Stats
-public class LiveStatsFragment extends Fragment {
+//Classe manipulant le contenu de l'onglet : Predicted Stats
+public class PredictedStatsFragment extends Fragment {
 
     //Les 2 Line Plot :
-        //Nombre de cas par jour
-        //Nombre de deces par jour
+        //Nombre de cas prédit par jour
+        //Nombre de deces prédit par jour
     private LineChart daily_cases_lineChart, daily_deaths_lineChart;
-    /*TODO : Ajouter des variables pour chacuns des graphiques nouvellement créés
-        private PieChart cases_per_department;
-    */
 
     //Une instance statique de cette classe pour permettre l'accès au graphiques à partir des autres classes
-    private static LiveStatsFragment _instance = null;
+    private static PredictedStatsFragment _instance = null;
 
-    public LiveStatsFragment() {
+    public PredictedStatsFragment() {
         // Required empty public constructor
     }
 
     //Création d'une nouvelle instance, le contenu de cette fonction est comme par défaut
-    public static LiveStatsFragment newInstance() {
-        LiveStatsFragment fragment = new LiveStatsFragment();
+    public static PredictedStatsFragment newInstance() {
+        PredictedStatsFragment fragment = new PredictedStatsFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -69,26 +49,22 @@ public class LiveStatsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //Utiliser le contenu graphique de fragment_live_stats.xml
-        View root = inflater.inflate(R.layout.fragment_live_stats, container, false);
+        //Utiliser le contenu graphique de fragment_predicted_stats.xml
+        View root = inflater.inflate(R.layout.fragment_predicted_stats, container, false);
         //Trouver les graphiques depuis le contenu chargé du fichier XML
-        daily_cases_lineChart = (LineChart)(root.findViewById(R.id.live_stats_line_chart_1));
-        daily_deaths_lineChart = (LineChart)(root.findViewById(R.id.live_stats_line_chart_2));
-        /*TODO : Affecter pour chacunes des variables des graphiques créées; leurs éléments correspondants
-            cases_per_department = (PieChart)(root.findViewById(R.id.id_du_pie_chart_comme_dans_le_fichier_xml));
-        */
-
+        daily_cases_lineChart = (LineChart)(root.findViewById(R.id.predicted_stats_line_chart_1));
+        daily_deaths_lineChart = (LineChart)(root.findViewById(R.id.predicted_stats_line_chart_2));
         //Actualiser le contenu des graphiques
         refreshAll();
         return root;
     }
 
-    //Fonction publique statique qui, quand elle est appelée, actualise le contenu de TOUS les graphiques
+    //Fonction publique statique qui, quand elle est appelée, actualise le contenu de tous les graphiques
     //de cet onglet
     public static void refreshAll(){
-        //Daily cases data
-        //URL vers le JSON de nombre de cas par jour
-        String myUrl = "http://10.0.2.2:5000/confbyday";
+        //Daily cases
+        //URL vers le JSON de nombre prédit de cas par jour
+        String myUrl = "http://10.0.2.2:5000/pred_conf";
         //String qui va contenir la réponse JSON
         String result;
         //Utilisation de la classe JSONRequests pour télécharger le JSON avec un nouveau thread
@@ -107,9 +83,9 @@ public class LiveStatsFragment extends Fragment {
         }
 
         //Daily deaths data
-        //On refait la meme chose, pour le nombre de deces par jour
+        //On refait la meme chose, pour le nombre prédit de deces par jour
         //il suffit de changer l'URL
-        myUrl = "http://10.0.2.2:5000/deathbyday";
+        myUrl = "http://10.0.2.2:5000/pred_death_P";
         getRequest = new JSONRequests();
         try {
             result = getRequest.execute(myUrl).get();
@@ -120,29 +96,21 @@ public class LiveStatsFragment extends Fragment {
         } catch (Exception e){
             e.printStackTrace();
         }
-
-        /*TODO : Faire la meme chose pour chacuns des nouveaux graphiques
-        *  -Préciser l'URL du JSON
-        *  -Instancier JSONRequests
-        *  -Utiliser l'instance de JSONRequests pour télécharger le JSON
-        *  -Parser le String reçu en JSONArray
-        *  -Envoyer le résultat à une nouvelle fonction qui raffraichit le contenu du graphique à partir d'un JSONArray
-        * */
     }
 
-    //Rafraichir le contenu du Line Plot de nombre de cas par jour, à partir d'un JSONArray
+    //Rafraichir le contenu du Line Plot de nombre prédit de cas par jour, à partir d'un JSONArray
     public static void refreshDailyCasesChart(JSONArray data){
-        System.out.println("refreshing daily cases");
+        System.out.println("refreshing predicted daily cases");
         ChartUtils.refreshLineChart(_instance.getActivity(), _instance.daily_cases_lineChart,
-                data, "Daily Cases", "Daily Cases",
-                "jour", "conf");
+                data, "Predicted Daily Cases", "Predicted Daily Cases",
+                "Date", "Confirm");
     }
 
-    //Rafraichir le contenu du Line Plot de nombre de deces par jour, à partir d'un JSONArray
+    //Rafraichir le contenu du Line Plot de nombre prédit de deces par jour, à partir d'un JSONArray
     public static void refreshDailyDeathsChart(JSONArray data){
-        System.out.println("refreshing daily deaths");
+        System.out.println("refreshing predicted daily deaths");
         ChartUtils.refreshLineChart(_instance.getActivity(), _instance.daily_deaths_lineChart,
-                data, "Daily Deaths", "Daily Deaths",
-                "jour", "death");
+                data, "Predicted Daily Deaths", "Predicted Daily Deaths",
+                "Date", "Deaths");
     }
 }

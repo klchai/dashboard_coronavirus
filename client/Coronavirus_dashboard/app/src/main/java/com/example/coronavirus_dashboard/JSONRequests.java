@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+//Classe permettant de télécharger dans un nouveau thread, un JSON depuis un URL donné
+//et retourne le résultat sous forme de String
 public class JSONRequests extends AsyncTask<String, Void, String> {
     public static final String REQUEST_METHOD = "GET";
     public static final int READ_TIMEOUT = 15000;
