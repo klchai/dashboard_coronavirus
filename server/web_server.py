@@ -51,7 +51,7 @@ def compose(day):
     cursor.execute("SELECT * FROM (SELECT sum(confirm), sum(recov), sum(death) from covid WHERE country=\"France\" group by jour ORDER BY jour)a\
     WHERE a.jour=\"%s\"" % day)
     res=cursor.fetchall()
-    res_json=[{"jour":row[0],"confirm":row[1],"recov":row[2],"death":row[3]} for row in res]
+    res_json=[{"confirm":row[0],"recov":row[1],"death":row[2]} for row in res]
     return jsonify(res_json)
 
 @app.route("/pred_conf")
