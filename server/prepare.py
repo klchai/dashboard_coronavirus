@@ -47,7 +47,7 @@ def predict_Arima():
     train = conf.cumsum()
     train["NDate"] = train["Date"]
     train = train.drop("Date",axis=1)
-    model = ARIMA(train["Confirmed"].values, order=(1, 2, 1))
+    model = ARIMA(train["Confirmed"].values, order=(2, 2, 1))
     fit = model.fit(trend='c', full_output=True, disp=True)
     forcast = fit.forecast(steps=31)
     pred = pd.DataFrame(forcast[0].tolist())
@@ -85,7 +85,7 @@ def predict_death_A():
     train = conf.cumsum()
     train["NDate"] = train["Date"]
     train = train.drop("Date",axis=1)
-    model = ARIMA(train["Deaths"].values, order=(1, 2, 1))
+    model = ARIMA(train["Deaths"].values, order=(2, 2, 1))
     fit = model.fit(trend='c', full_output=True, disp=True)
     forcast = fit.forecast(steps=31)
     pred = pd.DataFrame(forcast[0].tolist())
