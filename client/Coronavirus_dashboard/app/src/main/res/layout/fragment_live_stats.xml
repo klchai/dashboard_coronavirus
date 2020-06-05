@@ -42,11 +42,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
-            android:text="Total Deaths by "/>
+            android:text="Latest Situation in France"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <com.github.mikephil.charting.charts.PieChart
             android:layout_width="match_parent"

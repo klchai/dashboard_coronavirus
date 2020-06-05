@@ -48,10 +48,10 @@ def recovbyday():
 @app.route("/compose/<day>")
 # La composition du jour (cas confirmé, guéris et décès)
 def compose(day):
-    cursor.execute("SELECT * FROM (SELECT sum(confirm), sum(recov), sum(death) from covid WHERE country=\"France\" group by jour ORDER BY jour)a\
+    cursor.execute("SELECT * FROM (SELECT jour, sum(confirm), sum(recov), sum(death) from covid WHERE country=\"France\" group by jour ORDER BY jour)a\
     WHERE a.jour=\"%s\"" % day)
     res=cursor.fetchall()
-    res_json=[{"confirm":row[0],"recov":row[1],"death":row[2]} for row in res]
+    res_json=[{"Confirmed":row[1],"Recovered":row[2],"Deaths":row[3]} for row in res]
     return jsonify(res_json)
 
 @app.route("/pred_conf")
