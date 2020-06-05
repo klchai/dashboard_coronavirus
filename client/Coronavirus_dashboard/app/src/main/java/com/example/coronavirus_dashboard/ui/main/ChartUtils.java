@@ -1,17 +1,23 @@
 package com.example.coronavirus_dashboard.ui.main;
 
+import android.graphics.Color;
+
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.coronavirus_dashboard.R;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import org.json.JSONArray;
@@ -20,6 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 //Une classe qui contient des fonction statiques de manipulation des graphiques
 //utilisées fréquemment par LiveStatsFragment et PredictedStatsFragment
@@ -33,7 +40,7 @@ public class ChartUtils {
         return cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1);
     }
 
-    //Prend un JSONArray et retourne une liste de Entry de MPAndroid qui sera utilisé par les fonctions
+    //Prend un JSONArray et retourne une liste de PieEntry de MPAndroid qui sera utilisé par les fonctions
     //d'affichage de graphiques
     //dateColumnName : le nom du champs "Date" dans le JSON
     //valueColumnName : le nom du champs "Valeur" dans le JSON, qui peut etre le nombre de cas ou de deces
@@ -55,6 +62,22 @@ public class ChartUtils {
                 Date date = cal.getTime();
                 //System.out.println(date.toString() + " : " + dc);
                 entries.add(new Entry(date.getTime(), dc));
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return entries;
+    }
+    //Prend un JSONArray et retourne une liste de PieEntry de MPAndroid qui sera utilisé par les fonctions
+    public static ArrayList<PieEntry> getPieChartData(JSONArray data, String dateColumnName, ArrayList<String> valueColumnName){
+        ArrayList<PieEntry> entries = new ArrayList<>();
+        try {
+            for (int i = 0; i < valueColumnName.size(); ++i) {
+                JSONObject rec = data.getJSONObject(0);
+                int dc = rec.getInt(valueColumnName.get(i));
+                entries.add(new PieEntry(dc, valueColumnName.get(i)));
             }
         }
         catch (Exception e){
@@ -100,4 +123,21 @@ public class ChartUtils {
         lineChart.animateX(1500);
         lineChart.invalidate();
     }
+    //Raffraichir le contenu du PieChart, avec les données dans un JSONArray
+    public static void refreshPieChart(FragmentActivity fragmentActivity, PieChart pieChart, JSONArray data,
+                                       String label, String description,
+                                       String dateColumnName, ArrayList<String> valueColumnName) {
+        Description d = new Description();
+        d.setText(description);
+        pieChart.setDescription(d);
+        PieDataSet pieDataSet = new PieDataSet(getPieChartData(data, dateColumnName, valueColumnName), label);
+        pieDataSet.setColors(Color.RED, Color.GREEN, Color.BLUE);
+        PieData _data = new PieData(pieDataSet);
+        pieChart.setData(_data);
+        pieChart.animateX(1500);
+        pieChart.invalidate();
+    }
+
+
+
 }

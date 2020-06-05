@@ -46,9 +46,9 @@
             android:textStyle="bold"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
-            android:text="Total Deaths by Department"/>
+            android:text="Total Deaths by "/>
 
-        <com.github.mikephil.charting.charts.LineChart
+        <com.github.mikephil.charting.charts.PieChart
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:id="@+id/live_stats_pie_chart_1" />

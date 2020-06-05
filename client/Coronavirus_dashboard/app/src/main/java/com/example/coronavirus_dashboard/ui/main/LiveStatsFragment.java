@@ -38,9 +38,9 @@ public class LiveStatsFragment extends Fragment {
         //Nombre de cas par jour
         //Nombre de deces par jour
     private LineChart daily_cases_lineChart, daily_deaths_lineChart;
-    /*TODO : Ajouter des variables pour chacuns des graphiques nouvellement créés
-        private PieChart cases_per_department;
-    */
+    //TODO : Ajouter des variables pour chacuns des graphiques nouvellement créés
+    private PieChart daily_cases_PieChart;
+
 
     //Une instance statique de cette classe pour permettre l'accès au graphiques à partir des autres classes
     private static LiveStatsFragment _instance = null;
@@ -74,9 +74,9 @@ public class LiveStatsFragment extends Fragment {
         //Trouver les graphiques depuis le contenu chargé du fichier XML
         daily_cases_lineChart = (LineChart)(root.findViewById(R.id.live_stats_line_chart_1));
         daily_deaths_lineChart = (LineChart)(root.findViewById(R.id.live_stats_line_chart_2));
-        /*TODO : Affecter pour chacunes des variables des graphiques créées; leurs éléments correspondants
-            cases_per_department = (PieChart)(root.findViewById(R.id.id_du_pie_chart_comme_dans_le_fichier_xml));
-        */
+        //TODO : Affecter pour chacunes des variables des graphiques créées; leurs éléments correspondants
+        daily_cases_PieChart = (PieChart)(root.findViewById(R.id.live_stats_pie_chart_1));
+
 
         //Actualiser le contenu des graphiques
         refreshAll();
@@ -128,7 +128,33 @@ public class LiveStatsFragment extends Fragment {
         *  -Parser le String reçu en JSONArray
         *  -Envoyer le résultat à une nouvelle fonction qui raffraichit le contenu du graphique à partir d'un JSONArray
         * */
+        myUrl = "http://10.0.2.2:5000/compose/2020-05-25";
+        getRequest = new JSONRequests();
+        try {
+            result = getRequest.execute(myUrl).get();
+            System.out.println(result);
+
+            JSONArray obj = new JSONArray(result);
+            //On raffraichit le Line Plot avec le contenu reçu
+
+
+
+            refreshDailyDeathsPieChart(obj);
+            System.out.println("ccccccc");
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
+
+    private static void refreshDailyDeathsPieChart(JSONArray data) {
+
+     System.out.println("refreshing daily cases pie");
+     ArrayList<String> champs = new ArrayList();
+     champs.add("confirm");
+     champs.add("recov");
+     champs.add("death");
+        ChartUtils.refreshPieChart(_instance.getActivity(), _instance.daily_cases_PieChart,data, "Daily Cases", "Daily Cases",
+            "jour",  champs); }
 
     //Rafraichir le contenu du Line Plot de nombre de cas par jour, à partir d'un JSONArray
     public static void refreshDailyCasesChart(JSONArray data){
