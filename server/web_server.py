@@ -3,10 +3,6 @@ from flask import Flask,jsonify
 import os
 import pandas as pd
 import prepare as pre
-import requests
-import csv
-import urllib
-import socket
 
 app = Flask(__name__)
 
