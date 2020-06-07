@@ -53,22 +53,30 @@ def compose(day):
 @app.route("/pred_conf")
 # Prédiction du nombre confirmés - Modèle Prophet
 def pred_conf():
-    return pre.predict_Prophet()
+    predict = pre.predict_Prophet()
+    res = predict.astype(str).to_json(orient='records')
+    return res
 
 @app.route("/pred_conf_arima")
 # Prédiction du nombre confirmés - Modèle ARIMA
 def pred_conf_arima():
-    return pre.predict_Arima()
+    res = pre.predict_Arima()
+    res = res.to_json(orient='records')
+    return res
 
 @app.route("/pred_death_P")
 # Prédiction du nombre décès - Modèle Prophet
 def pred_death_P():
-    return pre.predict_death_P()
+    predict = pre.predict_death_P()
+    res = predict.astype(str).to_json(orient='records')
+    return res
 
 @app.route("/pred_death_A")
 # Prédiction du nombre décès - Modèle Prophet
 def pred_death_A():
-    return pre.predict_death_A()
+    res = pre.predict_death_A()
+    res = res.to_json(orient='records')
+    return res
 
 if __name__ == "__main__":
     pre.prepare_data()

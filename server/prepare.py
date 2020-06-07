@@ -36,8 +36,7 @@ def predict_Prophet():
     # Prenez que les bonnes prédictions(trend>0)
     predict = f_data[f_data['trend']>0].rename(columns={"ds":"Date","trend":"Confirm"})
     predict[["Confirm"]] = predict[["Confirm"]].astype(int)
-    res = predict.astype(str).to_json(orient='records')
-    return res
+    return predict
 
 # Prédiction - Modèle Arima
 def predict_Arima():
@@ -57,7 +56,6 @@ def predict_Arima():
     conf["Confirmed"] = conf["Confirmed"].astype(int)
     res = pd.concat([conf, predict])
     res.reset_index(drop=True,inplace=True)
-    res = res.to_json(orient='records')
     return res
 
 # Prédiction décès - Modèle Prophet
@@ -74,8 +72,7 @@ def predict_death_P():
     # Prenez que les bonnes prédictions(trend>0)
     predict = f_data[f_data['trend']>0].rename(columns={"ds":"Date","trend":"Deaths"})
     predict[["Deaths"]] = predict[["Deaths"]].astype(int)
-    res = predict.astype(str).to_json(orient='records')
-    return res
+    return predict
 
 # Prédiction décès - Modèle Arima
 def predict_death_A():
@@ -95,5 +92,4 @@ def predict_death_A():
     conf["Deaths"] = conf["Deaths"].astype(int)
     res = pd.concat([conf, predict])
     res.reset_index(drop=True,inplace=True)
-    res = res.to_json(orient='records')
     return res
