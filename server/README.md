@@ -1,6 +1,6 @@
 # Pré-requis
 Executer la commande suivante dans le terminal:
-__apt-get update && apt-get install -y docker-compose libsasl2-modules libsasl2-dev && pip install --upgrade pip six thrift_sasl "pyhive[hive]" flask fbprophet statsmodels__
+__apt-get update && apt-get install -y docker-compose libsasl2-modules libsasl2-dev && pip install --upgrade pip six thrift_sasl "pyhive[hive]" flask fbprophet statsmodels pandas__
 
 # Utilisation
 1. __docker-compose up -d__ pour lancer le serveur hive
